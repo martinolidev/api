@@ -7,6 +7,12 @@ func routes(_ app: Application) throws {
             throw Abort(.badRequest, reason: "The IP is missing.")
         }
         
+        //check if the IP is valid
+        if isValidIp(ip: ip) {
+            return "The IP is \(ip)"
+        } else {
+            throw Abort(.badRequest, reason: "The IP \(ip) is NOT valid.")
+        }
     }
 }
 

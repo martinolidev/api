@@ -9,7 +9,7 @@ func routes(_ app: Application) throws {
         
         //check if the IP is valid
         if isValidIp(ip: ip) {
-            return "The IP is \(ip)"
+            return nmapScan(ip: ip)
         } else {
             throw Abort(.badRequest, reason: "The IP \(ip) is NOT valid.")
         }
@@ -34,4 +34,26 @@ func isValidIp(ip: String) -> Bool {
         }
     }
     return true
+}
+
+//executing a basic command of nmap
+func nmapScan(ip: String) -> String {
+    let process = Process()
+    let pipe = Pipe()
+
+    process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/nmap")
+    process.arguments = ["-sS", "-p-", "--open", "-Pn", "-n", ip]
+    process.standardOutput = pipe
+
+    do {
+        try process.run()
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        if let output = String(data: data, encoding: .utf8) {
+            return output
+        } else {
+            return "Cannot read the output of the command"
+        }
+    } catch {
+        return "Cannor run the command"
+    }
 }

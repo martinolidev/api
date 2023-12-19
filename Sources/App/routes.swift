@@ -1,7 +1,7 @@
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get("ip", ":ip") { req -> String in
+    app.get("ip", ":ip") { req -> ports in
         //Get the ip parameter from the request
         guard let ip = req.parameters.get("ip") else {
             throw Abort(.badRequest, reason: "The IP is missing.")
@@ -9,7 +9,8 @@ func routes(_ app: Application) throws {
         
         //check if the IP is valid
         if isValidIp(ip: ip) {
-            return nmapScan(ip: ip)
+            let portStrings = extractNumbersAsStringFromBrackets(input: rustScan(ip: ip))
+            return ports(portNumbers: portStrings)
         } else {
             throw Abort(.badRequest, reason: "The IP \(ip) is NOT valid.")
         }
@@ -37,7 +38,7 @@ func isValidIp(ip: String) -> Bool {
 }
 
 //executing a basic command of rustscan
-func nmapScan(ip: String) -> String {
+func rustScan(ip: String) -> String {
     let process = Process()
     let pipe = Pipe()
 
@@ -62,3 +63,17 @@ func nmapScan(ip: String) -> String {
 struct ports: Content {
     var portNumbers: [String]
 }
+
+func extractNumbersAsStringFromBrackets(input: String) -> [String] {
+    let regexPattern = "\\[(.*?)\\]"
+    guard let regex = try? NSRegularExpression(pattern: regexPattern) else { return [] }
+
+    let nsrange = NSRange(input.startIndex..<input.endIndex, in: input)
+    guard let match = regex.firstMatch(in: input, options: [], range: nsrange),
+          let range = Range(match.range(at: 1), in: input) else { return [] }
+
+    let matchedString = String(input[range])
+    let numberStrings = matchedString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+    return numberStrings
+}
+

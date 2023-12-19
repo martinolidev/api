@@ -36,13 +36,13 @@ func isValidIp(ip: String) -> Bool {
     return true
 }
 
-//executing a basic command of nmap
+//executing a basic command of rustscan
 func nmapScan(ip: String) -> String {
     let process = Process()
     let pipe = Pipe()
 
-    process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/nmap")
-    process.arguments = ["-sS", "-p-", "--open", "-Pn", "-n", ip]
+    process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/rustscan")
+    process.arguments = ["-a", ip, "-g", "-r", "1-65535"]
     process.standardOutput = pipe
 
     do {

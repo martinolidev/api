@@ -42,7 +42,7 @@ func nmapScan(ip: String) -> String {
     let pipe = Pipe()
 
     process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/rustscan")
-    process.arguments = ["-a", ip, "-g", "-r", "1-65535"]
+    process.arguments = ["-a", ip, "-g"]
     process.standardOutput = pipe
 
     do {
@@ -56,4 +56,9 @@ func nmapScan(ip: String) -> String {
     } catch {
         return "Cannor run the command"
     }
+}
+
+//To return my json and the app will decode it later
+struct ports: Content {
+    var portNumbers: [String]
 }

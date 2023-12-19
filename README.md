@@ -11,7 +11,7 @@ It is designed to integrate with applications requiring network security informa
 ### Prerequisites
 - Vapor
 - Swift 5
-- Nmap installed on the server
+- rustscan installed on the server
 
 ### Installation
 1. Clone the repository:
@@ -32,7 +32,7 @@ The API returns a list of open ports and detected services in JSON format.
 ## Acknowledgments
 
 - [Vapor](https://vapor.codes)
-- [Nmap](https://nmap.org)
+- [rustscan](https://github.com/RustScan/RustScan)
 
 ## Disclaimer and Legal Notice
 
